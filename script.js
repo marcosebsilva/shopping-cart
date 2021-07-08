@@ -32,7 +32,7 @@ function cartItemClickListener(event) {
   // coloque seu código aqui
 }
 
-async function createCartItemElement({ id: sku, title: name, price: salePrice }) {
+function createCartItemElement({ sku, name, salePrice }) {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
@@ -51,7 +51,6 @@ async function productList($QUERY) {
     itemSection.appendChild(createProductItemElement({ sku, name, image }));
   });
 }
-
-window.onload = async () => {
+window.onload = () => {
   productList('computador');
 };
