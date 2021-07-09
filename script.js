@@ -86,7 +86,15 @@ function addToCartHandler() {
   });
 }
 
+function clearCart() {
+  const cartItems = document.querySelectorAll('.cart__item');
+  cartItems.forEach((item) => item.remove());
+  const totalDiv = document.querySelector('.total-price');
+  totalDiv.innerText = '0';
+}
+
 window.onload = async () => {
   await productList('computador');
   addToCartHandler();
+  document.querySelector('.empty-cart').addEventListener('click', clearCart);
 };
