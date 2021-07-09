@@ -24,13 +24,24 @@ function createProductItemElement({ sku, name, image }) {
   return section;
 }
 
-// function getSkuFromProductItem(item) {
-//   return item.querySelector('span.item__sku').innerText;
-// }
+function loadingHandler(action) {
+  if (action === 'remove') {
+    document.querySelector('.loading').remove();
+    return;
+  }
+  if (action === 'add') {
+    const loadingSpan = document.createElement('span');
+    loadingSpan.className = 'loading';
+    document.querySelector('.container').appendChild(loadingSpan);
+  }
+}
+
 async function updateTotal(itemID, operator) {
+  loadingHandler('add');
   const itemPrice = await fetch(`https://api.mercadolibre.com/items/${itemID}`)
     .then((response) => response.json())
     .then((object) => object.price);
+  loadingHandler('remove');
   const totalDiv = document.querySelector('.total-price');
   const currentTotal = parseFloat(totalDiv.innerText);
   if (operator === 'remove') {
@@ -60,10 +71,11 @@ function createCartItemElement({ id: sku, title: name, price: salePrice }) {
 
 async function productList($QUERY) { 
   const itemSection = document.querySelector('.items');
+  loadingHandler('add');
   const itemList = await fetch(`https://api.mercadolibre.com/sites/MLB/search?q=${$QUERY}`)
     .then((response) => response.json())
-    .then((object) => object);  
-
+    .then((object) => object);
+  loadingHandler('remove');
   itemList.results.forEach((item) => {
     const { id: sku, title: name, thumbnail: image } = item;
     itemSection.appendChild(createProductItemElement({ sku, name, image }));
@@ -76,9 +88,11 @@ function addToCartHandler() {
   addButtonsList.forEach((button) => {
     button.addEventListener('click', async (event) => {
       const itemID = event.target.parentElement.querySelector('.item__sku');
+      loadingHandler('add');
       const itemDetails = await fetch(`https://api.mercadolibre.com/items/${itemID.innerText}`)
         .then((response) => response.json())
         .then((object) => object);
+      loadingHandler('remove');
       cartItems.appendChild(createCartItemElement(itemDetails));
       console.log(event.target.parentElement);
       updateTotal(itemID.innerText, 'add');
