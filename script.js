@@ -27,8 +27,25 @@ function createProductItemElement({ sku, name, image }) {
 // function getSkuFromProductItem(item) {
 //   return item.querySelector('span.item__sku').innerText;
 // }
-
+async function updateTotal(itemID, operator) {
+  const itemPrice = await fetch(`https://api.mercadolibre.com/items/${itemID}`)
+    .then((response) => response.json())
+    .then((object) => object.price);
+  const totalDiv = document.querySelector('.total-price');
+  const currentTotal = parseFloat(totalDiv.innerText);
+  if (operator === 'remove') {
+    let newTotal = ((currentTotal - itemPrice) * 100) / 100;
+    if (newTotal < 0) {
+      newTotal = 0;
+    }
+    totalDiv.innerText = `${newTotal}`;
+  } else if (operator === 'add') {
+    const newTotal = currentTotal + itemPrice;
+    totalDiv.innerText = `${newTotal}`;
+  }
+}
 function cartItemClickListener(event) {
+  updateTotal(event.target.dataset.id, 'remove');
   event.target.remove();
 }
 
@@ -36,6 +53,7 @@ function createCartItemElement({ id: sku, title: name, price: salePrice }) {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
+  li.dataset.id = sku;
   li.addEventListener('click', cartItemClickListener);
   return li;
 }
@@ -57,11 +75,13 @@ function addToCartHandler() {
   const addButtonsList = document.querySelectorAll('.item__add');
   addButtonsList.forEach((button) => {
     button.addEventListener('click', async (event) => {
-      const itemID = event.target.parentElement.querySelector('.item__sku').innerText;
-      const itemDetails = await fetch(`https://api.mercadolibre.com/items/${itemID}`)
+      const itemID = event.target.parentElement.querySelector('.item__sku');
+      const itemDetails = await fetch(`https://api.mercadolibre.com/items/${itemID.innerText}`)
         .then((response) => response.json())
         .then((object) => object);
       cartItems.appendChild(createCartItemElement(itemDetails));
+      console.log(event.target.parentElement);
+      updateTotal(itemID.innerText, 'add');
     });
   });
 }
