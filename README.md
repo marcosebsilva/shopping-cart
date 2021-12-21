@@ -2,10 +2,11 @@
 Um app de compras simples que te permite consultar o catálogo do Mercado Livre para comprar computadores.
 
 ##### O que eu aprendi com o projeto?
-  * Consumo de API
   * Manipulação do DOM
   * HTML
   * CSS
+  * Fazer requisições a uma API *(Application Programming Interface)* do Mercado Livre;
+  * Trabalhar com funções assíncronas;
 
 _Esse projeto foi feito durante a Trybe._
 
